@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using SharpDX.Direct2D1;
 using Factory = SharpDX.Direct2D1.Factory;
@@ -149,14 +144,7 @@ namespace Smiteguru_Overlay
             {
                 device.BeginDraw();
                 device.Clear(Color.Transparent);
-                device.TextAntialiasMode = SharpDX.Direct2D1.TextAntialiasMode.Aliased; // you can set another text mode
-
-                //place your rendering things here
-                //if (GetActiveWindowTitle() == "Smite (32-bit, DX9)")
-                if (GetActiveWindowTitle() == "Calculator")
-                {
-
-                }
+                device.TextAntialiasMode = SharpDX.Direct2D1.TextAntialiasMode.Aliased;
 
                 device.EndDraw();
             }
