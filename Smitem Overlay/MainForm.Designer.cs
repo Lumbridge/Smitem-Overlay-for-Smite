@@ -53,8 +53,14 @@
             this.label4 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.comboBox2 = new System.Windows.Forms.ComboBox();
+            this.overlayXpos = new System.Windows.Forms.NumericUpDown();
+            this.overlayYpos = new System.Windows.Forms.NumericUpDown();
+            this.overlayXlabel = new System.Windows.Forms.Label();
+            this.overlayYlabel = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.overlayXpos)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.overlayYpos)).BeginInit();
             this.SuspendLayout();
             // 
             // dataGridView1
@@ -240,11 +246,59 @@
             this.comboBox2.TabIndex = 12;
             this.comboBox2.SelectedIndexChanged += new System.EventHandler(this.comboBox2_SelectedIndexChanged);
             // 
+            // overlayXpos
+            // 
+            this.overlayXpos.Location = new System.Drawing.Point(110, 184);
+            this.overlayXpos.Maximum = new decimal(new int[] {
+            999999,
+            0,
+            0,
+            0});
+            this.overlayXpos.Name = "overlayXpos";
+            this.overlayXpos.Size = new System.Drawing.Size(120, 20);
+            this.overlayXpos.TabIndex = 13;
+            this.overlayXpos.ValueChanged += new System.EventHandler(this.overlayXpos_ValueChanged);
+            // 
+            // overlayYpos
+            // 
+            this.overlayYpos.Location = new System.Drawing.Point(110, 210);
+            this.overlayYpos.Maximum = new decimal(new int[] {
+            999999,
+            0,
+            0,
+            0});
+            this.overlayYpos.Name = "overlayYpos";
+            this.overlayYpos.Size = new System.Drawing.Size(120, 20);
+            this.overlayYpos.TabIndex = 14;
+            this.overlayYpos.ValueChanged += new System.EventHandler(this.overlayYpos_ValueChanged);
+            // 
+            // overlayXlabel
+            // 
+            this.overlayXlabel.AutoSize = true;
+            this.overlayXlabel.Location = new System.Drawing.Point(11, 186);
+            this.overlayXlabel.Name = "overlayXlabel";
+            this.overlayXlabel.Size = new System.Drawing.Size(93, 13);
+            this.overlayXlabel.TabIndex = 15;
+            this.overlayXlabel.Text = "Overlay X Position";
+            // 
+            // overlayYlabel
+            // 
+            this.overlayYlabel.AutoSize = true;
+            this.overlayYlabel.Location = new System.Drawing.Point(11, 212);
+            this.overlayYlabel.Name = "overlayYlabel";
+            this.overlayYlabel.Size = new System.Drawing.Size(93, 13);
+            this.overlayYlabel.TabIndex = 16;
+            this.overlayYlabel.Text = "Overlay Y Position";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(245, 177);
+            this.ClientSize = new System.Drawing.Size(245, 250);
+            this.Controls.Add(this.overlayYlabel);
+            this.Controls.Add(this.overlayXlabel);
+            this.Controls.Add(this.overlayYpos);
+            this.Controls.Add(this.overlayXpos);
             this.Controls.Add(this.comboBox2);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.label4);
@@ -263,6 +317,8 @@
             this.Load += new System.EventHandler(this.MainForm_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.overlayXpos)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.overlayYpos)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -294,5 +350,9 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.ComboBox comboBox2;
+        private System.Windows.Forms.NumericUpDown overlayXpos;
+        private System.Windows.Forms.NumericUpDown overlayYpos;
+        private System.Windows.Forms.Label overlayXlabel;
+        private System.Windows.Forms.Label overlayYlabel;
     }
 }

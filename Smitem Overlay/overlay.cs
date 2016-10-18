@@ -12,7 +12,7 @@ using System.Runtime.InteropServices;
 
 namespace Smiteguru_Overlay
 {
-    public partial class Form1 : Form
+    public partial class overlay : Form
     {
         private WindowRenderTarget device;
         private HwndRenderTargetProperties renderProperties;
@@ -60,7 +60,7 @@ namespace Smiteguru_Overlay
         public const UInt32 TOPMOST_FLAGS = SWP_NOMOVE | SWP_NOSIZE;
         public static IntPtr HWND_TOPMOST = new IntPtr(-1);
 
-        public Form1()
+        public overlay()
         {
             InitializeComponent();
 
@@ -74,8 +74,8 @@ namespace Smiteguru_Overlay
         private void Form1_Load(object sender, EventArgs e)
         {
             this.DoubleBuffered = true;
-            this.Width = 232;// set your own size
-            this.Height = 157;
+            this.Width = 232;
+            this.Height = 348;
             this.Location = new System.Drawing.Point(20, 20);
             this.SetStyle(ControlStyles.OptimizedDoubleBuffer |// this reduce the flicker
                 ControlStyles.AllPaintingInWmPaint |
@@ -95,8 +95,6 @@ namespace Smiteguru_Overlay
                 PixelSize = new Size2(1920, 1080),
                 PresentOptions = PresentOptions.None
             };
-
-            //SetLayeredWindowAttributes(this.Handle, 0, 255, Managed.LWA_ALPHA);// caution directx error
 
             //Init DirectX
             device = new WindowRenderTarget(factory, new RenderTargetProperties(new PixelFormat(Format.B8G8R8A8_UNorm, AlphaMode.Premultiplied)), renderProperties);

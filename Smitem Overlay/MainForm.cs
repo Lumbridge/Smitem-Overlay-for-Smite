@@ -19,7 +19,7 @@ namespace Smiteguru_Overlay
 {
     public partial class MainForm : Form
     {
-        Form1 f1 = new Form1();
+        overlay f1 = new overlay();
 
         #region Global Lists
         List<string> contents = new List<string>();
@@ -33,6 +33,12 @@ namespace Smiteguru_Overlay
         List<string> godReleaseDate = new List<string>();
         List<string> sgGodCodes = new List<string>();
         List<string> links = new List<string>();
+
+        List<string> starterItems = new List<string>();
+        List<string> coreItems = new List<string>();
+        List<string> defensiveItems = new List<string>();
+        List<string> damageItems = new List<string>();
+
         List<List<string>> tableHeadings;
         List<List<string>> tableContents;
         #endregion
@@ -48,6 +54,15 @@ namespace Smiteguru_Overlay
         const int WM_HOTKEY = 0x0312;
 
         bool overlayEnabled = true;
+
+        public string Between(string STR, string FirstString, string LastString)
+        {
+            string FinalString;
+            int Pos1 = STR.IndexOf(FirstString) + FirstString.Length;
+            int Pos2 = STR.IndexOf(LastString);
+            FinalString = STR.Substring(Pos1, Pos2 - Pos1);
+            return FinalString;
+        }
 
         private void downloadWebpage()
         {
@@ -145,67 +160,95 @@ namespace Smiteguru_Overlay
 
         private void getImageLinks()
         {
-            string godCode = sgGodCodes[comboBox1.SelectedIndex], itemCode;
-
             // load smiteguru god specific page
             HtmlWeb web = new HtmlWeb();
-            HtmlAgilityPack.HtmlDocument doc = web.Load(("http://smite.guru/builds/i/" + godCode));
+            HtmlAgilityPack.HtmlDocument doc = web.Load(("http://smite.gamepedia.com/" + comboBox1.SelectedItem + "#Standard Build"));
 
-            HtmlNode node = doc.DocumentNode.SelectSingleNode("//ul[@class='list-inline text-center']");
-            string nodeString = node.InnerHtml.ToString();
+            // get HTML from div <div class="tabbertab" title="Arena Build" style="display: block;">
+            HtmlNodeCollection nodes = doc.DocumentNode.SelectNodes("//div[contains(@title,'Standard Build')]//table[@class='wikitable']");
 
-            for (int i = 0; i < 6; i++)
+            starterItems.Clear();
+            coreItems.Clear();
+            defensiveItems.Clear();
+            damageItems.Clear();
+            
+            // get defense items
+            for (int i = 0; i < 3; i++)
             {
-                itemCode = nodeString.Substring(nodeString.IndexOf("cdn.smitegu.ru/assets/img/id/") + "cdn.smitegu.ru/assets/img/id/".Length);
-                itemCode = itemCode.Substring(0, 9);
-                links.Add("http://cdn.smitegu.ru/assets/img/id/" + itemCode);
-
-                nodeString = nodeString.Replace("cdn.smitegu.ru/assets/img/id/" + itemCode, "");
+                string link = Between(nodes[4].InnerHtml, "src=\"", "\" width=\"64\"");
+                defensiveItems.Add(link);
+                Console.WriteLine("Added " + link + "\n");
+                nodes[4].InnerHtml = nodes[4].InnerHtml.Substring(nodes[4].InnerHtml.IndexOf("</a></td>"));
             }
 
-            if (node != null)
+            // get core items
+            for (int i = 0; i < 3; i++)
             {
-                foreach (string item in links)
-                {
-                    //Console.WriteLine(item);
-                }
+                string link = Between(nodes[3].InnerHtml, "src=\"", "\" width=\"64\"");
+                coreItems.Add(link);
+                Console.WriteLine("Added " + link + "\n");
+                nodes[3].InnerHtml = nodes[3].InnerHtml.Substring(nodes[3].InnerHtml.IndexOf("</a></td>"));
             }
-            else
+
+            // get damage items
+            for (int i = 0; i < 3; i++)
             {
-                Console.WriteLine("Nothing found!");
+                string link = Between(nodes[1].InnerHtml, "src=\"", "\" width=\"64\"");
+                damageItems.Add(link);
+                Console.WriteLine("Added " + link + "\n");
+                nodes[1].InnerHtml = nodes[1].InnerHtml.Substring(nodes[1].InnerHtml.IndexOf("</a></td>"));
             }
+
+            //get starter items
+            for (int i = 0; i < 3; i++)
+            {
+                string link = Between(nodes[0].InnerHtml, "src=\"", "\" width=\"64\"");
+                starterItems.Add(link);
+                Console.WriteLine("Added " + link + "\n");
+                nodes[0].InnerHtml = nodes[0].InnerHtml.Substring(nodes[0].InnerHtml.IndexOf("</a></td>"));
+            }
+
         }
 
         private void getImageLinksArena()
         {
-            string godCode = sgGodCodes[comboBox1.SelectedIndex], itemCode;
-
             // load smiteguru god specific page
             HtmlWeb web = new HtmlWeb();
-            HtmlAgilityPack.HtmlDocument doc = web.Load(("http://smite.guru/builds/i/" + godCode));
+            HtmlAgilityPack.HtmlDocument doc = web.Load(("http://smite.gamepedia.com/"+comboBox1.SelectedItem+"#Arena Build"));
 
-            HtmlNode node = doc.DocumentNode.SelectSingleNode("//div[@id='queue-435']//ul[@class='list-inline text-center']");
-            string nodeString = node.InnerHtml.ToString();
+            // get HTML from div <div class="tabbertab" title="Arena Build" style="display: block;">
+            HtmlNodeCollection nodes = doc.DocumentNode.SelectNodes("//div[contains(@title,'Arena Build')]//table[@class='wikitable']");
 
-            for (int i = 0; i < 6; i++)
+            starterItems.Clear();
+            coreItems.Clear();
+            defensiveItems.Clear();
+            damageItems.Clear();
+
+            // get damage items
+            for (int i = 0; i < 3; i++)
             {
-                itemCode = nodeString.Substring(nodeString.IndexOf("cdn.smitegu.ru/assets/img/id/") + "cdn.smitegu.ru/assets/img/id/".Length);
-                itemCode = itemCode.Substring(0, 9);
-                links.Add("http://cdn.smitegu.ru/assets/img/id/" + itemCode);
-
-                nodeString = nodeString.Replace("cdn.smitegu.ru/assets/img/id/" + itemCode, "");
+                string link = Between(nodes[4].InnerHtml, "src=\"", "\" width=\"64\"");
+                damageItems.Add(link);
+                Console.WriteLine("Added " + link + "\n");
+                nodes[4].InnerHtml = nodes[4].InnerHtml.Substring(nodes[4].InnerHtml.IndexOf("</a></td>"));
             }
 
-            if (node != null)
+            // get defense items
+            for (int i = 0; i < 3; i++)
             {
-                foreach (string item in links)
-                {
-                    //Console.WriteLine(item);
-                }
+                string link = Between(nodes[1].InnerHtml, "src=\"", "\" width=\"64\"");
+                defensiveItems.Add(link);
+                Console.WriteLine("Added " + link + "\n");
+                nodes[1].InnerHtml = nodes[1].InnerHtml.Substring(nodes[1].InnerHtml.IndexOf("</a></td>"));
             }
-            else
+
+            // get core items
+            for (int i = 0; i < 3; i++)
             {
-                Console.WriteLine("Nothing found!");
+                string link = Between(nodes[0].InnerHtml, "src=\"", "\" width=\"64\"");
+                coreItems.Add(link);
+                Console.WriteLine("Added " + link + "\n");
+                nodes[0].InnerHtml = nodes[0].InnerHtml.Substring(nodes[0].InnerHtml.IndexOf("</a></td>"));
             }
         }
 
@@ -297,7 +340,7 @@ namespace Smiteguru_Overlay
             }
         }
 
-        public MainForm(Form1 frm)
+        public MainForm(overlay frm)
         {
             InitializeComponent();
 
@@ -315,29 +358,79 @@ namespace Smiteguru_Overlay
                 comboBox1.Items.Add(name);
             }
             getGodCodes();
+
+            overlayXpos.Value = f1.Location.X;
+            overlayYpos.Value = f1.Location.Y;
+        }
+
+        private void clearPicBoxes()
+        {
+            f1.pictureBox1.Image.Dispose();
+            f1.pictureBox2.Image.Dispose();
+            f1.pictureBox3.Image.Dispose();
+            f1.pictureBox4.Image.Dispose();
+            f1.pictureBox5.Image.Dispose();
+            f1.pictureBox6.Image.Dispose();
+            f1.pictureBox7.Image.Dispose();
+            f1.pictureBox8.Image.Dispose();
+            f1.pictureBox9.Image.Dispose();
+        }
+
+        private void arenaLayout()
+        {
+            f1.pictureBox10.Hide();
+            f1.pictureBox11.Hide();
+            f1.pictureBox12.Hide();
+            f1.starterLabel.Hide();
+        }
+
+        private void standardLayout()
+        {
+            f1.pictureBox10.Show();
+            f1.pictureBox11.Show();
+            f1.pictureBox12.Show();
+            f1.starterLabel.Show();
         }
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            links.Clear();
-
             try
             {
                 if (comboBox2.SelectedIndex == 0)
                 {
                     getImageLinksArena();
+
+                    arenaLayout();
+
+                    f1.pictureBox1.Load(coreItems[0]);
+                    f1.pictureBox2.Load(coreItems[1]);
+                    f1.pictureBox3.Load(coreItems[2]);
+                    f1.pictureBox4.Load(damageItems[0]);
+                    f1.pictureBox5.Load(damageItems[1]);
+                    f1.pictureBox6.Load(damageItems[2]);
+                    f1.pictureBox7.Load(defensiveItems[0]);
+                    f1.pictureBox8.Load(defensiveItems[1]);
+                    f1.pictureBox9.Load(defensiveItems[2]);
                 }
                 else if (comboBox2.SelectedIndex == 1)
                 {
                     getImageLinks();
-                }
 
-                f1.pictureBox1.Load(links[0]);
-                f1.pictureBox2.Load(links[1]);
-                f1.pictureBox3.Load(links[2]);
-                f1.pictureBox4.Load(links[3]);
-                f1.pictureBox5.Load(links[4]);
-                f1.pictureBox6.Load(links[5]);
+                    standardLayout();
+
+                    f1.pictureBox10.Load(starterItems[0]);
+                    f1.pictureBox11.Load(starterItems[1]);
+                    f1.pictureBox12.Load(starterItems[2]);
+                    f1.pictureBox1.Load(coreItems[0]);
+                    f1.pictureBox2.Load(coreItems[1]);
+                    f1.pictureBox3.Load(coreItems[2]);
+                    f1.pictureBox4.Load(damageItems[0]);
+                    f1.pictureBox5.Load(damageItems[1]);
+                    f1.pictureBox6.Load(damageItems[2]);
+                    f1.pictureBox7.Load(defensiveItems[0]);
+                    f1.pictureBox8.Load(defensiveItems[1]);
+                    f1.pictureBox9.Load(defensiveItems[2]);
+                }
             }
             catch
             {
@@ -347,25 +440,43 @@ namespace Smiteguru_Overlay
 
         private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
         {
-            links.Clear();
-
             try
             {
                 if (comboBox2.SelectedIndex == 0)
                 {
                     getImageLinksArena();
+
+                    arenaLayout();
+
+                    f1.pictureBox1.Load(coreItems[0]);
+                    f1.pictureBox2.Load(coreItems[1]);
+                    f1.pictureBox3.Load(coreItems[2]);
+                    f1.pictureBox4.Load(damageItems[0]);
+                    f1.pictureBox5.Load(damageItems[1]);
+                    f1.pictureBox6.Load(damageItems[2]);
+                    f1.pictureBox7.Load(defensiveItems[0]);
+                    f1.pictureBox8.Load(defensiveItems[1]);
+                    f1.pictureBox9.Load(defensiveItems[2]);
                 }
                 else if (comboBox2.SelectedIndex == 1)
                 {
                     getImageLinks();
-                }
 
-                f1.pictureBox1.Load(links[0]);
-                f1.pictureBox2.Load(links[1]);
-                f1.pictureBox3.Load(links[2]);
-                f1.pictureBox4.Load(links[3]);
-                f1.pictureBox5.Load(links[4]);
-                f1.pictureBox6.Load(links[5]);
+                    standardLayout();
+
+                    f1.pictureBox10.Load(starterItems[0]);
+                    f1.pictureBox11.Load(starterItems[1]);
+                    f1.pictureBox12.Load(starterItems[2]);
+                    f1.pictureBox1.Load(coreItems[0]);
+                    f1.pictureBox2.Load(coreItems[1]);
+                    f1.pictureBox3.Load(coreItems[2]);
+                    f1.pictureBox4.Load(damageItems[0]);
+                    f1.pictureBox5.Load(damageItems[1]);
+                    f1.pictureBox6.Load(damageItems[2]);
+                    f1.pictureBox7.Load(defensiveItems[0]);
+                    f1.pictureBox8.Load(defensiveItems[1]);
+                    f1.pictureBox9.Load(defensiveItems[2]);
+                }
             }
             catch
             {
@@ -411,5 +522,14 @@ namespace Smiteguru_Overlay
         public static extern bool SetForegroundWindow(IntPtr hWnd);
         #endregion
 
+        private void overlayXpos_ValueChanged(object sender, EventArgs e)
+        {
+            f1.Location = new Point(Convert.ToInt32(overlayXpos.Value), Convert.ToInt32(overlayYpos.Value));
+        }
+
+        private void overlayYpos_ValueChanged(object sender, EventArgs e)
+        {
+            f1.Location = new Point(Convert.ToInt32(overlayXpos.Value), Convert.ToInt32(overlayYpos.Value));
+        }
     }
 }
