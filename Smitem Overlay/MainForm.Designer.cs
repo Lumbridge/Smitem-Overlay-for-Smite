@@ -250,10 +250,15 @@
             // 
             this.overlayXpos.Location = new System.Drawing.Point(110, 184);
             this.overlayXpos.Maximum = new decimal(new int[] {
-            999999,
+            9999,
             0,
             0,
             0});
+            this.overlayXpos.Minimum = new decimal(new int[] {
+            9999,
+            0,
+            0,
+            -2147483648});
             this.overlayXpos.Name = "overlayXpos";
             this.overlayXpos.Size = new System.Drawing.Size(120, 20);
             this.overlayXpos.TabIndex = 13;
@@ -263,10 +268,15 @@
             // 
             this.overlayYpos.Location = new System.Drawing.Point(110, 210);
             this.overlayYpos.Maximum = new decimal(new int[] {
-            999999,
+            9999,
             0,
             0,
             0});
+            this.overlayYpos.Minimum = new decimal(new int[] {
+            9999,
+            0,
+            0,
+            -2147483648});
             this.overlayYpos.Name = "overlayYpos";
             this.overlayYpos.Size = new System.Drawing.Size(120, 20);
             this.overlayYpos.TabIndex = 14;

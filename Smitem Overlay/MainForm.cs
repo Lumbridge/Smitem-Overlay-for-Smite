@@ -106,56 +106,6 @@ namespace Smiteguru_Overlay
             {
                 godNames.Add(contents[i]);
             }
-            //// add pantheons to list 2n+9
-            //for (int i = 2; i < contents.Count; i += 9)
-            //{
-            //    godPantheon.Add(contents[i]);
-            //}
-            //// add attack type to list 3n+9
-            //for (int i = 3; i < contents.Count; i += 9)
-            //{
-            //    godAttackType.Add(contents[i]);
-            //}
-            //// add power type to list 4n+9
-            //for (int i = 4; i < contents.Count; i += 9)
-            //{
-            //    godPowerType.Add(contents[i]);
-            //}
-            //// add class to list 5n+9
-            //for (int i = 5; i < contents.Count; i += 9)
-            //{
-            //    godClass.Add(contents[i]);
-            //}
-            //// add favor cost to list 6n+9
-            //for (int i = 6; i < contents.Count; i += 9)
-            //{
-            //    godFavorCost.Add(contents[i]);
-            //}
-            //// add gems cost to list 7n+9
-            //for (int i = 7; i < contents.Count; i += 9)
-            //{
-            //    godGemsCost.Add(contents[i]);
-            //}
-            //// add release date to list 8n+9
-            //for (int i = 8; i < contents.Count; i += 9)
-            //{
-            //    godReleaseDate.Add(contents[i]);
-            //}
-
-            //// add all data from lists to table
-            //for (int i = 0; i < godNames.Count; i++)
-            //{
-            //    dataGridView1.Rows.Add();
-
-            //    dataGridView1.Rows[i].Cells[0].Value = godNames[i];
-            //    dataGridView1.Rows[i].Cells[1].Value = godPantheon[i];
-            //    dataGridView1.Rows[i].Cells[2].Value = godAttackType[i];
-            //    dataGridView1.Rows[i].Cells[3].Value = godPowerType[i];
-            //    dataGridView1.Rows[i].Cells[4].Value = godClass[i];
-            //    dataGridView1.Rows[i].Cells[5].Value = godFavorCost[i];
-            //    dataGridView1.Rows[i].Cells[6].Value = godGemsCost[i];
-            //    dataGridView1.Rows[i].Cells[7].Value = godReleaseDate[i];
-            //}
         }
 
         private void getImageLinks()
@@ -252,26 +202,6 @@ namespace Smiteguru_Overlay
             }
         }
 
-        public double GetRandomNumber(double minimum, double maximum)
-        {
-            Random random = new Random();
-            return random.NextDouble() * (maximum - minimum) + minimum;
-        }
-
-        private int getRowIndexByColumnNameAndSearchTerm(string columnHeader, string searchTerm)
-        {
-            int rowIndex = -1;
-
-            DataGridViewRow row = dataGridView1.Rows
-                .Cast<DataGridViewRow>()
-                .Where(r => r.Cells[columnHeader].Value.ToString().Equals(searchTerm))
-                .First();
-
-            rowIndex = row.Index;
-
-            return rowIndex;
-        }
-
         IntPtr smiteHandle = FindWindow("LaunchUnrealUWindowsClient", "Smite (32-bit, DX9)");
 
         protected override void WndProc(ref Message m)
@@ -316,30 +246,6 @@ namespace Smiteguru_Overlay
             Application.Exit();
         }
 
-        private void getGodCodes()
-        {
-            // load smiteguru god build page
-            HtmlWeb web = new HtmlWeb();
-            HtmlAgilityPack.HtmlDocument doc = web.Load("http://smite.guru/builds");
-
-            HtmlNode node = doc.DocumentNode.SelectNodes("//div[@id='gods-container']").First();
-
-            string allHTML = node.InnerHtml.ToString();
-            string godCode = allHTML.Substring(allHTML.IndexOf("/i/") + "/i/".Length);
-
-            // load all god codes into sgGodCodes
-            foreach (string name in godNames)
-            {
-                godCode = allHTML.Substring(allHTML.IndexOf("/i/") + "/i/".Length);
-                godCode = godCode.Substring(0, 4);
-
-                sgGodCodes.Add(godCode);
-                //Console.WriteLine(name + " - " + godCode);
-
-                allHTML = allHTML.Replace("/i/" + godCode, "");
-            }
-        }
-
         public MainForm(overlay frm)
         {
             InitializeComponent();
@@ -357,23 +263,9 @@ namespace Smiteguru_Overlay
             {
                 comboBox1.Items.Add(name);
             }
-            getGodCodes();
 
             overlayXpos.Value = f1.Location.X;
             overlayYpos.Value = f1.Location.Y;
-        }
-
-        private void clearPicBoxes()
-        {
-            f1.pictureBox1.Image.Dispose();
-            f1.pictureBox2.Image.Dispose();
-            f1.pictureBox3.Image.Dispose();
-            f1.pictureBox4.Image.Dispose();
-            f1.pictureBox5.Image.Dispose();
-            f1.pictureBox6.Image.Dispose();
-            f1.pictureBox7.Image.Dispose();
-            f1.pictureBox8.Image.Dispose();
-            f1.pictureBox9.Image.Dispose();
         }
 
         private void arenaLayout()
@@ -398,9 +290,8 @@ namespace Smiteguru_Overlay
             {
                 if (comboBox2.SelectedIndex == 0)
                 {
-                    getImageLinksArena();
-
                     arenaLayout();
+                    getImageLinksArena();
 
                     f1.pictureBox1.Load(coreItems[0]);
                     f1.pictureBox2.Load(coreItems[1]);
@@ -414,10 +305,9 @@ namespace Smiteguru_Overlay
                 }
                 else if (comboBox2.SelectedIndex == 1)
                 {
-                    getImageLinks();
-
                     standardLayout();
-
+                    getImageLinks();
+                    
                     f1.pictureBox10.Load(starterItems[0]);
                     f1.pictureBox11.Load(starterItems[1]);
                     f1.pictureBox12.Load(starterItems[2]);
@@ -444,9 +334,8 @@ namespace Smiteguru_Overlay
             {
                 if (comboBox2.SelectedIndex == 0)
                 {
-                    getImageLinksArena();
-
                     arenaLayout();
+                    getImageLinksArena();
 
                     f1.pictureBox1.Load(coreItems[0]);
                     f1.pictureBox2.Load(coreItems[1]);
@@ -460,9 +349,8 @@ namespace Smiteguru_Overlay
                 }
                 else if (comboBox2.SelectedIndex == 1)
                 {
-                    getImageLinks();
-
                     standardLayout();
+                    getImageLinks();
 
                     f1.pictureBox10.Load(starterItems[0]);
                     f1.pictureBox11.Load(starterItems[1]);
