@@ -10,7 +10,9 @@ using SharpDX.DirectWrite;
 using System.Threading;
 using System.Runtime.InteropServices;
 
-namespace Smiteguru_Overlay
+using static Smitem_Overlay.Classes.WinAPI;
+
+namespace Smitem_Overlay
 {
     public partial class overlay : Form
     {
@@ -31,28 +33,6 @@ namespace Smiteguru_Overlay
         private IntPtr handle;
         private Thread sDX = null;
 
-        //DllImports
-        [DllImport("user32.dll")]
-        static extern IntPtr GetForegroundWindow();
-
-        [DllImport("user32.dll")]
-        static extern int GetWindowText(IntPtr hWnd, StringBuilder text, int count);
-
-        [DllImport("user32.dll")]
-        public static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
-
-        [DllImport("user32.dll")]
-        static extern bool SetLayeredWindowAttributes(IntPtr hwnd, uint crKey, byte bAlpha, uint dwFlags);
-
-        [DllImport("user32.dll", SetLastError = true)]
-        public static extern int GetWindowLong(IntPtr hWnd, int nIndex);
-
-        [DllImport("user32.dll")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags);
-
-        [DllImport("dwmapi.dll")]
-        public static extern void DwmExtendFrameIntoClientArea(IntPtr hWnd, ref int[] pMargins);
 
         //Styles
         public const UInt32 SWP_NOSIZE = 0x0001;
@@ -74,10 +54,10 @@ namespace Smiteguru_Overlay
         private void Form1_Load(object sender, EventArgs e)
         {
             this.DoubleBuffered = true;
-            this.Width = 232;// set your own size
+            this.Width = 232;
             this.Height = 157;
             this.Location = new System.Drawing.Point(10, 10);
-            this.SetStyle(ControlStyles.OptimizedDoubleBuffer |// this reduce the flicker
+            this.SetStyle(ControlStyles.OptimizedDoubleBuffer |
                 ControlStyles.AllPaintingInWmPaint |
                 ControlStyles.DoubleBuffer |
                 ControlStyles.UserPaint |
@@ -96,8 +76,6 @@ namespace Smiteguru_Overlay
                 PresentOptions = PresentOptions.None
             };
 
-            //SetLayeredWindowAttributes(this.Handle, 0, 255, Managed.LWA_ALPHA);// caution directx error
-
             //Init DirectX
             device = new WindowRenderTarget(factory, new RenderTargetProperties(new PixelFormat(Format.B8G8R8A8_UNorm, AlphaMode.Premultiplied)), renderProperties);
 
@@ -108,12 +86,6 @@ namespace Smiteguru_Overlay
             // Init font's
             font = new TextFormat(fontFactory, fontFamily, fontSize);
             fontSmall = new TextFormat(fontFactory, fontFamily, fontSizeSmall);
-
-            sDX = new Thread(new ParameterizedThreadStart(sDXThread));
-
-            sDX.Priority = ThreadPriority.Highest;
-            sDX.IsBackground = true;
-            sDX.Start();
 
             MainForm mf = new MainForm(this);
             mf.ShowDialog();

@@ -18,7 +18,7 @@ using HtmlAgilityPack;
 using static Smitem_Overlay.Classes.WinAPI;
 using Smitem_Overlay.Classes;
 
-namespace Smiteguru_Overlay
+namespace Smitem_Overlay
 {
     public partial class MainForm : Form
     {
@@ -234,19 +234,18 @@ namespace Smiteguru_Overlay
             Console.WriteLine(Gods.Count + " gods loaded.");
         }
 
-        private void ComboBox_SelectedGod_SelectedIndexChanged(object sender, EventArgs e)
+        private void LoadImages()
         {
             try
             {
-                if (ComboBox_SelectedMode.SelectedIndex == 0)
+                switch (ComboBox_SelectedMode.SelectedIndex)
                 {
-                    // arena
-                    ImageLinks = GetMostPopularArenaItemImageLinks(ComboBox_SelectedGod.Text.ToLower());
-                }
-                else if (ComboBox_SelectedMode.SelectedIndex == 1)
-                {
-                    //conq
-                    ImageLinks = GetMostPopularConquestItemImageLinks(ComboBox_SelectedGod.Text.ToLower());
+                    case 0: // arena
+                        ImageLinks = GetMostPopularArenaItemImageLinks(ComboBox_SelectedGod.Text.ToLower());
+                        break;
+                    case 1: // conquest
+                        ImageLinks = GetMostPopularConquestItemImageLinks(ComboBox_SelectedGod.Text.ToLower());
+                        break;
                 }
 
                 f1.pictureBox1.Load(ImageLinks[0]);
@@ -256,38 +255,17 @@ namespace Smiteguru_Overlay
                 f1.pictureBox5.Load(ImageLinks[4]);
                 f1.pictureBox6.Load(ImageLinks[5]);
             }
-            catch (Exception ex)
-            {
-                
-            }
+            catch { }
+        }
+
+        private void ComboBox_SelectedGod_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            LoadImages();
         }
 
         private void ComboBox_SelectedMode_SelectedIndexChanged(object sender, EventArgs e)
         {
-            try
-            {
-                if (ComboBox_SelectedMode.SelectedIndex == 0)
-                {
-                    // arena
-                    ImageLinks = GetMostPopularArenaItemImageLinks(ComboBox_SelectedGod.Text.ToLower());
-                }
-                else if (ComboBox_SelectedMode.SelectedIndex == 1)
-                {
-                    // conq
-                    ImageLinks = GetMostPopularConquestItemImageLinks(ComboBox_SelectedGod.Text.ToLower());
-                }
-
-                f1.pictureBox1.Load(ImageLinks[0]);
-                f1.pictureBox2.Load(ImageLinks[1]);
-                f1.pictureBox3.Load(ImageLinks[2]);
-                f1.pictureBox4.Load(ImageLinks[3]);
-                f1.pictureBox5.Load(ImageLinks[4]);
-                f1.pictureBox6.Load(ImageLinks[5]);
-            }
-            catch (Exception ex)
-            {
-                
-            }
+            LoadImages();
         }
 
         private void overlayXpos_ValueChanged(object sender, EventArgs e)

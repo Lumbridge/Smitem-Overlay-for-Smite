@@ -1,4 +1,4 @@
-﻿namespace Smiteguru_Overlay
+﻿namespace Smitem_Overlay
 {
     partial class MainForm
     {
