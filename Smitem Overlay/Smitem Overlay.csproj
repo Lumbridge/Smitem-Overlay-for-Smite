@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{315376FC-E2F6-46BE-9A03-9DCE7493374C}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Smitem_Overlay</RootNamespace>
     <AssemblyName>Smitem Overlay</AssemblyName>
@@ -39,33 +39,20 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="HtmlAgilityPack, Version=1.4.9.5, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
-      <HintPath>..\packages\HtmlAgilityPack.1.4.9.5\lib\Net45\HtmlAgilityPack.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="HtmlAgilityPack, Version=1.5.1.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
+      <HintPath>..\packages\HtmlAgilityPack.1.5.1\lib\Net45\HtmlAgilityPack.dll</HintPath>
     </Reference>
     <Reference Include="SharpDX">
-      <HintPath>..\..\..\Documents\Visual Studio 2015\Projects\Guild Wars 2 TP Item Buyer\Guild Wars 2 TP Item Buyer\bin\StoreApp\SharpDX.dll</HintPath>
-    </Reference>
-    <Reference Include="SharpDX.D3DCompiler">
-      <HintPath>..\..\..\Documents\Visual Studio 2015\Projects\Guild Wars 2 TP Item Buyer\Guild Wars 2 TP Item Buyer\bin\StoreApp\SharpDX.D3DCompiler.dll</HintPath>
+      <HintPath>..\packages\SharpDX.4.0.1\lib\net45\SharpDX.dll</HintPath>
     </Reference>
     <Reference Include="SharpDX.Direct2D1">
-      <HintPath>..\..\..\Documents\Visual Studio 2015\Projects\Guild Wars 2 TP Item Buyer\Guild Wars 2 TP Item Buyer\bin\StoreApp\SharpDX.Direct2D1.dll</HintPath>
+      <HintPath>..\packages\SharpDX.Direct2D1.4.0.1\lib\net45\SharpDX.Direct2D1.dll</HintPath>
     </Reference>
     <Reference Include="SharpDX.DXGI">
-      <HintPath>..\..\..\Documents\Visual Studio 2015\Projects\Guild Wars 2 TP Item Buyer\Guild Wars 2 TP Item Buyer\bin\StoreApp\SharpDX.DXGI.dll</HintPath>
+      <HintPath>..\packages\SharpDX.DXGI.4.0.1\lib\net45\SharpDX.DXGI.dll</HintPath>
     </Reference>
     <Reference Include="SharpDX.Mathematics">
-      <HintPath>..\..\..\Documents\Visual Studio 2015\Projects\Guild Wars 2 TP Item Buyer\Guild Wars 2 TP Item Buyer\bin\StoreApp\SharpDX.Mathematics.dll</HintPath>
-    </Reference>
-    <Reference Include="SharpDX.MediaFoundation">
-      <HintPath>..\..\..\Documents\Visual Studio 2015\Projects\Guild Wars 2 TP Item Buyer\Guild Wars 2 TP Item Buyer\bin\StoreApp\SharpDX.MediaFoundation.dll</HintPath>
-    </Reference>
-    <Reference Include="SharpDX.XAudio2">
-      <HintPath>..\..\..\Documents\Visual Studio 2015\Projects\Guild Wars 2 TP Item Buyer\Guild Wars 2 TP Item Buyer\bin\StoreApp\SharpDX.XAudio2.dll</HintPath>
-    </Reference>
-    <Reference Include="SharpDX.XInput">
-      <HintPath>..\..\..\Documents\Visual Studio 2015\Projects\Guild Wars 2 TP Item Buyer\Guild Wars 2 TP Item Buyer\bin\StoreApp\SharpDX.XInput.dll</HintPath>
+      <HintPath>..\packages\SharpDX.Mathematics.4.0.1\lib\net45\SharpDX.Mathematics.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -80,6 +67,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\God.cs" />
+    <Compile Include="Classes\WinAPI.cs" />
     <Compile Include="overlay.cs">
       <SubType>Form</SubType>
     </Compile>

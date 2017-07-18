@@ -49,10 +49,10 @@
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.ComboBox_SelectedGod = new System.Windows.Forms.ComboBox();
             this.label4 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
-            this.comboBox2 = new System.Windows.Forms.ComboBox();
+            this.ComboBox_SelectedMode = new System.Windows.Forms.ComboBox();
             this.overlayYlabel = new System.Windows.Forms.Label();
             this.overlayXlabel = new System.Windows.Forms.Label();
             this.overlayYpos = new System.Windows.Forms.NumericUpDown();
@@ -208,15 +208,15 @@
             this.label3.TabIndex = 8;
             this.label3.Text = "CTRL+SHIFT+K = Show/Hide Item Overlay";
             // 
-            // comboBox1
+            // ComboBox_SelectedGod
             // 
-            this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(78, 15);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(156, 21);
-            this.comboBox1.TabIndex = 9;
-            this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
+            this.ComboBox_SelectedGod.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.ComboBox_SelectedGod.FormattingEnabled = true;
+            this.ComboBox_SelectedGod.Location = new System.Drawing.Point(78, 15);
+            this.ComboBox_SelectedGod.Name = "ComboBox_SelectedGod";
+            this.ComboBox_SelectedGod.Size = new System.Drawing.Size(156, 21);
+            this.ComboBox_SelectedGod.TabIndex = 9;
+            this.ComboBox_SelectedGod.SelectedIndexChanged += new System.EventHandler(this.ComboBox_SelectedGod_SelectedIndexChanged);
             // 
             // label4
             // 
@@ -236,18 +236,18 @@
             this.label5.TabIndex = 11;
             this.label5.Text = "Game Mode:";
             // 
-            // comboBox2
+            // ComboBox_SelectedMode
             // 
-            this.comboBox2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox2.FormattingEnabled = true;
-            this.comboBox2.Items.AddRange(new object[] {
+            this.ComboBox_SelectedMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.ComboBox_SelectedMode.FormattingEnabled = true;
+            this.ComboBox_SelectedMode.Items.AddRange(new object[] {
             "Arena",
             "Conquest"});
-            this.comboBox2.Location = new System.Drawing.Point(78, 47);
-            this.comboBox2.Name = "comboBox2";
-            this.comboBox2.Size = new System.Drawing.Size(156, 21);
-            this.comboBox2.TabIndex = 12;
-            this.comboBox2.SelectedIndexChanged += new System.EventHandler(this.comboBox2_SelectedIndexChanged);
+            this.ComboBox_SelectedMode.Location = new System.Drawing.Point(78, 47);
+            this.ComboBox_SelectedMode.Name = "ComboBox_SelectedMode";
+            this.ComboBox_SelectedMode.Size = new System.Drawing.Size(156, 21);
+            this.ComboBox_SelectedMode.TabIndex = 12;
+            this.ComboBox_SelectedMode.SelectedIndexChanged += new System.EventHandler(this.ComboBox_SelectedMode_SelectedIndexChanged);
             // 
             // overlayYlabel
             // 
@@ -344,10 +344,10 @@
             this.Controls.Add(this.overlayXlabel);
             this.Controls.Add(this.overlayYpos);
             this.Controls.Add(this.overlayXpos);
-            this.Controls.Add(this.comboBox2);
+            this.Controls.Add(this.ComboBox_SelectedMode);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.label4);
-            this.Controls.Add(this.comboBox1);
+            this.Controls.Add(this.ComboBox_SelectedGod);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
@@ -391,10 +391,10 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.ComboBox ComboBox_SelectedGod;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.ComboBox comboBox2;
+        private System.Windows.Forms.ComboBox ComboBox_SelectedMode;
         private System.Windows.Forms.Label overlayYlabel;
         private System.Windows.Forms.Label overlayXlabel;
         private System.Windows.Forms.NumericUpDown overlayYpos;

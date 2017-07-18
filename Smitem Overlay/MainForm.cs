@@ -15,24 +15,22 @@ using System.Text.RegularExpressions;
 using System.Diagnostics;
 using HtmlAgilityPack;
 
+using static Smitem_Overlay.Classes.WinAPI;
+using Smitem_Overlay.Classes;
+
 namespace Smiteguru_Overlay
 {
     public partial class MainForm : Form
     {
+        IntPtr SmiteHandle = FindWindow("LaunchUnrealUWindowsClient", "Smite (32-bit, DX9)");
+
         overlay f1 = new overlay();
 
         #region Global Lists
         List<string> contents = new List<string>();
-        List<string> godNames = new List<string>();
-        List<string> godPantheon = new List<string>();
-        List<string> godAttackType = new List<string>();
-        List<string> godPowerType = new List<string>();
-        List<string> godClass = new List<string>();
-        List<string> godFavorCost = new List<string>();
-        List<string> godGemsCost = new List<string>();
-        List<string> godReleaseDate = new List<string>();
+        List<God> Gods = new List<God>();
+        List<string> ImageLinks = new List<string>();
         List<string> sgGodCodes = new List<string>();
-        List<string> links = new List<string>();
         List<List<string>> tableHeadings;
         List<List<string>> tableContents;
         #endregion
@@ -51,62 +49,117 @@ namespace Smiteguru_Overlay
 
         bool overlayEnabled = true;
 
-        private void getSmiteguruGodList()
+        private List<God> GetSmiteGuruGodList()
         {
-            HtmlWeb web = new HtmlWeb();
-            HtmlAgilityPack.HtmlDocument doc = web.Load(("http://smite.guru/builds"));
+            List<God> GodList = new List<God>();
 
-            HtmlNodeCollection nodes = doc.DocumentNode.SelectNodes("//div[@id='gods-container']//a//h6//strong");
-            
-            foreach(HtmlNode node in nodes)
+            WebClient webClient = new WebClient();
+            string page = webClient.DownloadString("http://smite.guru/builds");
+
+            HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
+            doc.LoadHtml(page);
+
+            foreach (HtmlNode node in doc.DocumentNode.SelectNodes("//a[@class='champion-md']"))
             {
-                if (node.InnerHtml.Contains("&#039;"))
-                    node.InnerHtml = node.InnerHtml.Replace("&#039;", "'");
+                string innertext = node.InnerText;
 
-                godNames.Add(node.InnerHtml.Trim());
+                // Check for ' code and replace it
+                if (innertext.Contains("&#039;"))
+                    innertext = node.InnerText.Replace("&#039;", "'");
+
+                // insert a symbol at the first double space to collect the god name easier
+                innertext = innertext.Insert(innertext.IndexOf("  "), "^");
+
+                string godName = GetSubstringByString(innertext[0].ToString(), "^", innertext);
+
+                // replace the god name, symbol and double space with nothing to collect the class easier
+                innertext = innertext.Replace(godName + "^  ", "");
+
+                // add the new god to the list
+                GodList.Add(
+                    new God()
+                    {
+                        Name = godName,
+                        Class = innertext.Trim()
+                    });
             }
+
+            // return the completed god list
+            return GodList;
         }
 
-        private void getImageLinks()
+        private List<string> GetMostPopularConquestItemImageLinks(string GodName)
         {
-            string godCode = sgGodCodes[comboBox1.SelectedIndex], itemCode;
+            if (GodName.Contains(" "))
+                GodName = GodName.Replace(" ", "-");
 
-            // load smiteguru god specific page
-            HtmlWeb web = new HtmlWeb();
-            HtmlAgilityPack.HtmlDocument doc = web.Load(("http://smite.guru/builds/i/" + godCode));
+            List<string> LinkList = new List<string>();
 
-            HtmlNode node = doc.DocumentNode.SelectSingleNode("//ul[@class='list-inline text-center']");
+            WebClient webClient = new WebClient();
+            string page = webClient.DownloadString("http://smite.guru/builds/" + GodName);
 
-            for (int i = 0; i < 6; i++)
+            HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
+            doc.LoadHtml(page);
+
+            foreach (HtmlNode node in doc.DocumentNode.SelectNodes("//div[@id='426']"))
             {
-                itemCode = node.InnerHtml.Substring(node.InnerHtml.IndexOf("cdn.smitegu.ru/assets/img/id/") + "cdn.smitegu.ru/assets/img/id/".Length);
-                itemCode = itemCode.Substring(0, 9);
-                links.Add("http://cdn.smitegu.ru/assets/img/id/" + itemCode);
+                foreach (HtmlNode node2 in node.SelectNodes(".//div[@class='card-icon card-md']"))
+                {
+                    foreach (HtmlNode node3 in node2.SelectNodes(".//img[@src]"))
+                    {
+                        HtmlAttribute src = node3.Attributes["src"];
 
-                node.InnerHtml = node.InnerHtml.Replace("cdn.smitegu.ru/assets/img/id/" + itemCode, "");
+                        string innertext = src.Value.Replace("//", "");
+
+                        // Check for ' code and replace it
+                        if (innertext.Contains("&#039;"))
+                            innertext = node3.InnerText.Replace("&#039;", "'");
+
+                        LinkList.Add("http://" + innertext);
+                    }
+                }
             }
+
+            // return the completed god list
+            return LinkList;
         }
 
-        private void getImageLinksArena()
+        private List<string> GetMostPopularArenaItemImageLinks(string GodName)
         {
-            string godCode = sgGodCodes[comboBox1.SelectedIndex], itemCode;
+            if (GodName.Contains(" "))
+                GodName = GodName.Replace(" ", "-");
 
-            // load smiteguru god specific page
-            HtmlWeb web = new HtmlWeb();
-            HtmlAgilityPack.HtmlDocument doc = web.Load(("http://smite.guru/builds/i/" + godCode));
+            List<string> LinkList = new List<string>();
 
-            HtmlNode node = doc.DocumentNode.SelectSingleNode("//div[@id='queue-435']//ul[@class='list-inline text-center']");
-            string nodeString = node.InnerHtml.ToString();
+            WebClient webClient = new WebClient();
+            string page = webClient.DownloadString("http://smite.guru/builds/" + GodName);
 
-            for (int i = 0; i < 6; i++)
+            HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
+            doc.LoadHtml(page);
+
+            foreach (HtmlNode node in doc.DocumentNode.SelectNodes("//div[@id='435']"))
             {
-                itemCode = nodeString.Substring(nodeString.IndexOf("cdn.smitegu.ru/assets/img/id/") + "cdn.smitegu.ru/assets/img/id/".Length);
-                itemCode = itemCode.Substring(0, 9);
-                links.Add("http://cdn.smitegu.ru/assets/img/id/" + itemCode);
+                foreach (HtmlNode node2 in node.SelectNodes(".//div[@class='card-icon card-md']"))
+                {
+                    foreach (HtmlNode node3 in node2.SelectNodes(".//img[@src]"))
+                    {
+                        HtmlAttribute src = node3.Attributes["src"];
 
-                nodeString = nodeString.Replace("cdn.smitegu.ru/assets/img/id/" + itemCode, "");
+                        string innertext = src.Value.Replace("//", "");
+
+                        // Check for ' code and replace it
+                        if (innertext.Contains("&#039;"))
+                            innertext = node3.InnerText.Replace("&#039;", "'");
+
+                        LinkList.Add("http://" + innertext);
+                    }
+                }
             }
+
+            // return the completed god list
+            return LinkList;
         }
+
 
         public double GetRandomNumber(double minimum, double maximum)
         {
@@ -114,35 +167,19 @@ namespace Smiteguru_Overlay
             return random.NextDouble() * (maximum - minimum) + minimum;
         }
 
-        private int getRowIndexByColumnNameAndSearchTerm(string columnHeader, string searchTerm)
-        {
-            int rowIndex = -1;
-
-            DataGridViewRow row = dataGridView1.Rows
-                .Cast<DataGridViewRow>()
-                .Where(r => r.Cells[columnHeader].Value.ToString().Equals(searchTerm))
-                .First();
-
-            rowIndex = row.Index;
-
-            return rowIndex;
-        }
-
-        IntPtr smiteHandle = FindWindow("LaunchUnrealUWindowsClient", "Smite (32-bit, DX9)");
-
         protected override void WndProc(ref Message m)
         {
             // Hotkey Detection Method
             if (m.Msg == WM_HOTKEY && (int)m.WParam == 1)
             {
                 // CTRL+SHIFT+K Hotkey Pressed (Show/Hide Item Overlay)
-                if (!this.ContainsFocus)
+                if (!ContainsFocus)
                 {
-                    this.Activate();
+                    Activate();
                 }
                 else
                 {
-                    SetForegroundWindow(smiteHandle);
+                    SetForegroundWindow(SmiteHandle);
                 }
             }
             else if (m.Msg == WM_HOTKEY && (int)m.WParam == 2)
@@ -166,34 +203,10 @@ namespace Smiteguru_Overlay
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            UnregisterHotKey(this.Handle, 1);
-            UnregisterHotKey(this.Handle, 2);
+            UnregisterHotKey(Handle, 1);
+            UnregisterHotKey(Handle, 2);
 
             Application.Exit();
-        }
-
-        private void getGodCodes()
-        {
-            // load smiteguru god build page
-            HtmlWeb web = new HtmlWeb();
-            HtmlAgilityPack.HtmlDocument doc = web.Load("http://smite.guru/builds");
-
-            HtmlNode node = doc.DocumentNode.SelectNodes("//div[@id='gods-container']").First();
-
-            string allHTML = node.InnerHtml.ToString();
-            string godCode = allHTML.Substring(allHTML.IndexOf("/i/") + "/i/".Length);
-
-            // load all god codes into sgGodCodes
-            foreach (string name in godNames)
-            {
-                godCode = allHTML.Substring(allHTML.IndexOf("/i/") + "/i/".Length);
-                godCode = godCode.Substring(0, 4);
-
-                sgGodCodes.Add(godCode);
-                //Console.WriteLine(name + " - " + godCode);
-
-                allHTML = allHTML.Replace("/i/" + godCode, "");
-            }
         }
 
         public MainForm(overlay frm)
@@ -202,8 +215,8 @@ namespace Smiteguru_Overlay
 
             f1 = frm;
 
-            RegisterHotKey(this.Handle, 1, MOD_CONTROL + MOD_SHIFT, (int)Keys.X);
-            RegisterHotKey(this.Handle, 2, MOD_CONTROL + MOD_SHIFT, (int)Keys.K);
+            RegisterHotKey(Handle, 1, MOD_CONTROL + MOD_SHIFT, (int)Keys.X);
+            RegisterHotKey(Handle, 2, MOD_CONTROL + MOD_SHIFT, (int)Keys.K);
         }
 
         private void MainForm_Load(object sender, EventArgs e)
@@ -211,107 +224,71 @@ namespace Smiteguru_Overlay
             overlayXpos.Value = f1.Location.X;
             overlayYpos.Value = f1.Location.Y;
 
-            getSmiteguruGodList();
-            foreach (string name in godNames)
+            Gods = GetSmiteGuruGodList();
+
+            foreach (var god in Gods)
             {
-                comboBox1.Items.Add(name);
+                ComboBox_SelectedGod.Items.Add(god.Name);
             }
-            getGodCodes();
+
+            Console.WriteLine(Gods.Count + " gods loaded.");
         }
 
-        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        private void ComboBox_SelectedGod_SelectedIndexChanged(object sender, EventArgs e)
         {
-            links.Clear();
-
             try
             {
-                if (comboBox2.SelectedIndex == 0)
+                if (ComboBox_SelectedMode.SelectedIndex == 0)
                 {
-                    getImageLinksArena();
+                    // arena
+                    ImageLinks = GetMostPopularArenaItemImageLinks(ComboBox_SelectedGod.Text.ToLower());
                 }
-                else if (comboBox2.SelectedIndex == 1)
+                else if (ComboBox_SelectedMode.SelectedIndex == 1)
                 {
-                    getImageLinks();
+                    //conq
+                    ImageLinks = GetMostPopularConquestItemImageLinks(ComboBox_SelectedGod.Text.ToLower());
                 }
 
-                f1.pictureBox1.Load(links[0]);
-                f1.pictureBox2.Load(links[1]);
-                f1.pictureBox3.Load(links[2]);
-                f1.pictureBox4.Load(links[3]);
-                f1.pictureBox5.Load(links[4]);
-                f1.pictureBox6.Load(links[5]);
+                f1.pictureBox1.Load(ImageLinks[0]);
+                f1.pictureBox2.Load(ImageLinks[1]);
+                f1.pictureBox3.Load(ImageLinks[2]);
+                f1.pictureBox4.Load(ImageLinks[3]);
+                f1.pictureBox5.Load(ImageLinks[4]);
+                f1.pictureBox6.Load(ImageLinks[5]);
             }
-            catch
+            catch (Exception ex)
             {
-
+                
             }
         }
 
-        private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
+        private void ComboBox_SelectedMode_SelectedIndexChanged(object sender, EventArgs e)
         {
-            links.Clear();
-
             try
             {
-                if (comboBox2.SelectedIndex == 0)
+                if (ComboBox_SelectedMode.SelectedIndex == 0)
                 {
-                    getImageLinksArena();
+                    // arena
+                    ImageLinks = GetMostPopularArenaItemImageLinks(ComboBox_SelectedGod.Text.ToLower());
                 }
-                else if (comboBox2.SelectedIndex == 1)
+                else if (ComboBox_SelectedMode.SelectedIndex == 1)
                 {
-                    getImageLinks();
+                    // conq
+                    ImageLinks = GetMostPopularConquestItemImageLinks(ComboBox_SelectedGod.Text.ToLower());
                 }
 
-                f1.pictureBox1.Load(links[0]);
-                f1.pictureBox2.Load(links[1]);
-                f1.pictureBox3.Load(links[2]);
-                f1.pictureBox4.Load(links[3]);
-                f1.pictureBox5.Load(links[4]);
-                f1.pictureBox6.Load(links[5]);
+                f1.pictureBox1.Load(ImageLinks[0]);
+                f1.pictureBox2.Load(ImageLinks[1]);
+                f1.pictureBox3.Load(ImageLinks[2]);
+                f1.pictureBox4.Load(ImageLinks[3]);
+                f1.pictureBox5.Load(ImageLinks[4]);
+                f1.pictureBox6.Load(ImageLinks[5]);
             }
-            catch
+            catch (Exception ex)
             {
-
+                
             }
         }
-
-        #region Invoke DLLs
-        [DllImport("user32.dll")]
-        public static extern bool RegisterHotKey(IntPtr hWnd, int id, int fsModifiers, int vlc);
-
-        [DllImport("user32.dll")]
-        public static extern bool UnregisterHotKey(IntPtr hWnd, int id);
-
-        [DllImport("user32.dll")]
-        private static extern bool ShowWindowAsync(IntPtr hWnd, int nCmdShow);
-
-        [DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
-        public static extern void mouse_event(uint dwFlags, uint dx, uint dy, uint cButtons, uint dwExtraInfo);
-
-        [DllImport("user32.dll", SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        static extern bool GetCursorPos(out POINT lpPoint);
-
-        [DllImport("User32.Dll")]
-        public static extern long SetCursorPos(int x, int y);
-
-        [DllImport("User32.Dll")]
-        public static extern bool ClientToScreen(IntPtr hWnd, ref POINT point);
-
-        [StructLayout(LayoutKind.Sequential)]
-        public struct POINT
-        {
-            public int x;
-            public int y;
-        }
-
-        [DllImport("USER32.DLL", CharSet = CharSet.Unicode)]
-        public static extern IntPtr FindWindow(string lpClassName,
-            string lpWindowName);
-
-        [DllImport("USER32.DLL")]
-        public static extern bool SetForegroundWindow(IntPtr hWnd);
-        #endregion
 
         private void overlayXpos_ValueChanged(object sender, EventArgs e)
         {
